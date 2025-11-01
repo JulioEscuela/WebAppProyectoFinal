@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Tareas</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <section class="app wrap" id="app">
+    <div class="app-header">
+      <div class="user-card">
+        <div class="avatar" aria-hidden="true"></div>
+        <div>
+          <div class="label">Usuario autenticado</div>
+          <input id="userName" class="input input-readonly" type="text" value="" readonly aria-readonly="true">
+        </div>
+      </div>
+      <button id="logoutBtn" class="btn btn-ghost">Cerrar sesión</button>
+    </div>
+
+    <div class="grid">
+      <!-- Create panel -->
+      <div class="panel">
+        <h2>Registrar nueva tarea</h2>
+        <form id="taskForm" novalidate>
+          <div class="grid-2">
+            <div class="field"><label for="taskId">Código de la tarea (ID)</label><input id="taskId" class="input" type="text" required pattern="[A-Za-z0-9_-]+"></div>
+            <div class="field"><label for="projectId">ID del proyecto</label><input id="projectId" class="input" type="text" required pattern="[A-Za-z0-9_-]+"></div>
+          </div>
+          <div class="field"><label for="titleInput">Título de la tarea</label><input id="titleInput" class="input" type="text" required></div>
+          <div class="field"><label for="descInput">Descripción de la tarea</label><textarea id="descInput" class="input" rows="3" required></textarea></div>
+          <div class="grid-2">
+            <div class="field"><label for="dateInput">Fecha de inicio</label><input id="dateInput" class="input" type="date" required></div>
+            <div class="field"><label for="clientInput">Nombre del cliente</label><input id="clientInput" class="input" type="text" required></div>
+          </div>
+          <div class="field"><label for="commentsInput">Comentarios</label><textarea id="commentsInput" class="input" rows="2" placeholder="Opcional"></textarea></div>
+          <div class="field"><label for="statusInput">Estatus</label>
+            <select id="statusInput" class="input" required>
+              <option value="Por hacer" selected>Por hacer</option>
+              <option value="En progreso">En progreso</option>
+              <option value="Rechazado">Rechazado</option>
+              <option value="Cancelado">Cancelado</option>
+              <option value="Cerrado">Cerrado</option>
+              <option value="En pruebas de calidad">En pruebas de calidad</option>
+              <option value="En validación por el usuario">En validación por el usuario</option>
+              <option value="En proceso de liberación">En proceso de liberación</option>
+            </select>
+          </div>
+          <div id="taskAlert" class="alert" role="status" aria-live="polite" hidden></div>
+          <div class="row end"><button type="submit" class="btn" id="saveTaskBtn">Guardar tarea</button></div>
+        </form>
+      </div>
+
+      <!-- Edit panel / Data consult section -->
+      <div class="panel">
+        <h2>Consulta y cambios de tarea (doble click en la tabla)</h2>
+        <form id="editForm" novalidate>
+          <div class="grid-2">
+            <div class="field"><label for="e_taskId">ID</label><input id="e_taskId" class="input input-readonly" type="text" readonly></div>
+            <div class="field"><label for="e_projectId">ID del proyecto</label><input id="e_projectId" class="input input-readonly" type="text" readonly></div>
+          </div>
+          <div class="field"><label for="e_title">Título</label><input id="e_title" class="input input-readonly" type="text" readonly></div>
+          <div class="field"><label for="e_desc">Descripción</label><textarea id="e_desc" class="input input-readonly" rows="3" readonly></textarea></div>
+          <div class="grid-2">
+            <div class="field"><label for="e_date">Fecha de inicio</label><input id="e_date" class="input input-readonly" type="text" readonly></div>
+            <div class="field"><label for="e_client">Cliente</label><input id="e_client" class="input input-readonly" type="text" readonly></div>
+          </div>
+
+          <div class="field"><label for="e_comments">Comentarios (histórico)</label><textarea id="e_comments" class="input input-readonly" rows="3" readonly></textarea></div>
+
+          <div class="grid-2">
+            <div class="field">
+              <label for="e_status">Estatus (editable)</label>
+              <select id="e_status" class="input">
+                <option value="Por hacer">Por hacer</option>
+                <option value="En progreso">En progreso</option>
+                <option value="Rechazado">Rechazado</option>
+                <option value="Cancelado">Cancelado</option>
+                <option value="Cerrado">Cerrado</option>
+                <option value="En pruebas de calidad">En pruebas de calidad</option>
+                <option value="En validación por el usuario">En validación por el usuario</option>
+                <option value="En proceso de liberación">En proceso de liberación</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="e_newComment">Nuevo comentario (se registrará con fecha y hora)</label>
+              <textarea id="e_newComment" class="input" rows="2" placeholder="Escribe un comentario para agregar al histórico (opcional)"></textarea>
+            </div>
+          </div>
+
+          <div id="editAlert" class="alert" role="status" aria-live="polite" hidden></div>
+          <div class="row end"><button type="submit" class="btn" id="updateTaskBtn">Actualizar tarea</button></div>
+        </form>
+      </div>
+    </div>
+
+    <!-- List / Filter panel -->
+    <div class="panel" style="margin-top:18px">
+      <h2>Tareas registradas</h2>
+      <div class="table-wrap">
+        <div class="row" style="justify-content:flex-start; gap:12px;">
+          <label for="statusFilter">Filtrar por estatus:</label>
+          <select id="statusFilter" class="input" style="max-width:320px">
+            <option value="Todos" selected>Todos</option>
+            <option value="Por hacer">Por hacer</option>
+            <option value="En progreso">En progreso</option>
+            <option value="Rechazado">Rechazado</option>
+            <option value="Cancelado">Cancelado</option>
+            <option value="Cerrado">Cerrado</option>
+            <option value="En pruebas de calidad">En pruebas de calidad</option>
+            <option value="En validación por el usuario">En validación por el usuario</option>
+            <option value="En proceso de liberación">En proceso de liberación</option>
+          </select>
+        </div>
+        <table class="table" id="taskTable" aria-describedby="tableCaption">
+          <caption id="tableCaption" class="sr-only">Tabla de tareas registradas</caption>
+          <thead>
+            <tr>
+              <th>ID</th><th>Título</th><th>Descripción</th><th>Fecha inicio</th><th>Cliente</th><th>Proyecto</th><th>Comentarios</th><th>Estatus</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <script src="tareas.js"></script>
+</body>
+</html>
